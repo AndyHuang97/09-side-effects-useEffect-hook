@@ -7,11 +7,28 @@ import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "./assets/logo.png";
 import { sortPlacesByDistance } from "./loc.js";
 
+// correct way to retrieve data synchronously ONCE
+const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
+const storedPlaces = storedIds.map((id) =>
+  AVAILABLE_PLACES.find((place) => place.id === id)
+);
+
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
   const [availablePlaces, setAvailablePlaces] = useState([]);
-  const [pickedPlaces, setPickedPlaces] = useState([]);
+  const [pickedPlaces, setPickedPlaces] = useState(storedPlaces);
+
+  // wrong usage of useEffect: accessing localStorage is synchronous (retrieving data is instant),
+  // while getting the current position is asynchronous (the resulting position does not return immediately)
+  // useEffect(() => {
+  //   const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
+  //   const storedPlaces = storedIds.map((id) =>
+  //     AVAILABLE_PLACES.find((place) => place.id === id)
+  //   );
+
+  //   setPickedPlaces(storedPlaces);
+  // }, []);
 
   // use useEffect to avoid infinite loops, or for cases where you need to do some
   // computation and rerender once
@@ -68,6 +85,12 @@ function App() {
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
     modal.current.close();
+
+    const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
+    localStorage.setItem(
+      "selectedPlaces",
+      JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current))
+    );
   }
 
   return (
