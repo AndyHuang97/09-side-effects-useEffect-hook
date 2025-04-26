@@ -29,7 +29,7 @@ function Modal({ open, children, onClose }) {
   // this implementation does not show the backdrop, because showModal() is not invoked
   return createPortal(
     <dialog className="modal" ref={dialog} onClose={onClose}>
-      {children}
+      {open ? children : null}
     </dialog>,
     document.getElementById("modal")
   );
