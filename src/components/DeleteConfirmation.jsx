@@ -1,12 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+const TIMER = 3000;
+
 export default function DeleteConfirmation({ onConfirm, onCancel }) {
+  const [remainingTime, setRemainingTime] = useState(TIMER);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("INTERVAL");
+      setRemainingTime((prevTime) => prevTime - 10);
+    }, 10);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   useEffect(() => {
     console.log("TIMER SET");
 
     // this is a SIDE EFFECT, not related to our JSX code
     const timer = setTimeout(() => {
       onConfirm();
-    }, 3000);
+    }, TIMER);
 
     // clean up function is called when the component is removed/dismounted from the DOM
     // if no clean up function is provided, the timer will keep running and call onConfirm
@@ -15,7 +31,7 @@ export default function DeleteConfirmation({ onConfirm, onCancel }) {
       console.log("Cleaning up timer");
       clearTimeout(timer);
     };
-  }, [onConfirm]); 
+  }, [onConfirm]);
   // could add onConfirm as dependency, but functions in js are just values
   // in react, the functions are defined in the components and when a component
   // rerenders the functions are recreated with different values (even if content does not change)
@@ -35,6 +51,7 @@ export default function DeleteConfirmation({ onConfirm, onCancel }) {
           Yes
         </button>
       </div>
+      <progress value={remainingTime} max={TIMER}/>
     </div>
   );
 }
