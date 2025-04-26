@@ -16,18 +16,19 @@ function Modal({ open, children }) {
   // }
 
   useEffect(() => {
+    console.log("open: " + open);
     if (open) {
       dialog.current.showModal();
     } else {
       dialog.current.close();
     }
-  }, [open]); 
+  }, [open]);
   // effect dependencies are state or prop values used in the useEffect lambda
   // other dependencies would be functions or context values that use state or props
 
   // this implementation does not show the backdrop, because showModal() is not invoked
   return createPortal(
-    <dialog className="modal" ref={dialog} open={open}>
+    <dialog className="modal" ref={dialog}>
       {children}
     </dialog>,
     document.getElementById("modal")
