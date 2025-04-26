@@ -15,7 +15,12 @@ export default function DeleteConfirmation({ onConfirm, onCancel }) {
       console.log("Cleaning up timer");
       clearTimeout(timer);
     };
-  }, []);
+  }, []); 
+  // could add onConfirm as dependency, but functions in js are just values
+  // in react, the functions are defined in the components and when a component
+  // rerenders the functions are recreated with different values (even if content does not change)
+  // In normal cases, adding the onConfirm functions would generate an infinite loop
+  // However, in our special case we dismount the DeleteConfirmation thanks to the modalIsOpen state
 
   return (
     <div id="delete-confirmation">
