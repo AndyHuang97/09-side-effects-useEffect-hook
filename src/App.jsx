@@ -13,11 +13,13 @@ function App() {
   const [availablePlaces, setAvailablePlaces] = useState([]);
   const [pickedPlaces, setPickedPlaces] = useState([]);
 
+  // use useEffect to avoid infinite loops, or for cases where you need to do some
+  // computation and rerender once
   useEffect(() => {
     console.log("sorting places ...");
 
     navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position)
+      console.log(position);
       const sortedPlaces = sortPlacesByDistance(
         AVAILABLE_PLACES,
         position.coords.latitude,
@@ -29,7 +31,7 @@ function App() {
   }, []);
   // [] is the dependency array, the values if changed will make useEffect execute again
   // without it, it will generate an infinite loop ...
-  // It is executed after the component is rendered ...
+  // It is executed after the component is rendered, it's another execution cycle ...
   // use useEffect() sparingly ... over usage is bad practice
 
   function handleStartRemovePlace(id) {
@@ -49,6 +51,16 @@ function App() {
       const place = AVAILABLE_PLACES.find((place) => place.id === id);
       return [place, ...prevPickedPlaces];
     });
+
+    // another side effect, to store selected places on browser
+    // does not generate an infinite loop, because it is called on user interaction
+    const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
+    if (storedIds.indexOf(id) === -1) {
+      localStorage.setItem(
+        "selectedPlaces",
+        JSON.stringify([id, ...storedIds])
+      );
+    }
   }
 
   function handleRemovePlace() {
